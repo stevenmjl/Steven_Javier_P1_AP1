@@ -1,4 +1,6 @@
 using Steven_Javier_P1_AP1.Components;
+using RegistroTecnicos.DAL;
+using Microsoft.EntityFrameworkCore;
 
 namespace Steven_Javier_P1_AP1
 {
@@ -11,6 +13,9 @@ namespace Steven_Javier_P1_AP1
             // Add services to the container.
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
+
+            var ConStr = builder.Configuration.GetConnectionString("SqlConStr");
+            builder.Services.AddDbContextFactory<Contexto>(o => o.UseSqlServer(ConStr));
 
             var app = builder.Build();
 
