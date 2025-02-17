@@ -1,5 +1,5 @@
 using Steven_Javier_P1_AP1.Components;
-using RegistroTecnicos.DAL;
+using Steven_Javier_P1_AP1.DAL;
 using Microsoft.EntityFrameworkCore;
 
 namespace Steven_Javier_P1_AP1
