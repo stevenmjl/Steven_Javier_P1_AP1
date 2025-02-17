@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 
 namespace Steven_Javier_P1_AP1.Services;
 
-public class ModelosService(IDbContextFactory<Contexto> DbFactory)
+public class AportesService(IDbContextFactory<Contexto> DbFactory)
 {
     // Guardar
     public async Task<bool> Guardar(Aportes aporte)
@@ -72,6 +72,7 @@ public class ModelosService(IDbContextFactory<Contexto> DbFactory)
             .ToListAsync();
     }
 
+    // Funcion extra para insertar los Aportes incrementalmente en Create razor
     public async Task<int> UltimoId()
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
