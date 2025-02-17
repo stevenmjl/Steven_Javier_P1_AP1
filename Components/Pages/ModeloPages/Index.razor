@@ -1,5 +1,141 @@
-﻿<h3>Index</h3>
+﻿@page "/Aportes/Index"
+@rendermode InteractiveServer
+@inject AportesService aportesService
+
+<PageTitle>Aportes</PageTitle>
+
+<div class="container">
+    <div class="card shadow-lg">
+        @* Título *@
+        <div class="card-header text-white text-center">
+            <div class="bg-primary rounded">
+                <h1>Consulta de aportes</h1>
+            </div>
+        </div>
+
+        @* Sección arriba de tabla *@
+        <div class="card-body">
+            @* Textos de apoyo descriptivo *@
+            <div class="row mb-2 align-items-end">
+                <div class="row align-items-center">
+                    <div class="col-4 col-md-2">
+                        <label for="Filtro" class="form-label">Tipo de filtrado:</label>
+                    </div>
+                    <div class="col-4 col-md-2">
+                        <label for="DatoBusqueda" class="form-label">Dato a buscar:</label>
+                    </div>
+                </div>
+
+                @* Selección de datos en filtro *@
+                <div class="col-md-2">
+                    <select @bind="opcionFiltro" class="form-select">
+                        <option value="id">ID</option>
+                        <option value="persona" selected>Persona</option>
+                    </select>
+                </div>
+
+                @* Filtro de búsqueda *@
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <input @bind="datoActualFiltro" class="form-control"
+                               placeholder="Escribir aquí..." />
+                        <button @onclick="Buscar" class="btn btn-primary" type="button">
+                            Buscar
+                        </button>
+                        <button @onclick="OnInitializedAsync" class="btn btn-secondary" type="button">
+                            Limpiar filtro
+                        </button>
+                    </div>
+                </div>
+
+                @* Botón para agregar *@
+                <div class="col-md-2 text-end">
+                    <a href="/Aportes/Create" class="btn btn-success">
+                        Agregar aporte
+                    </a>
+                </div>
+            </div>
+
+            @* La tabla de los aportes *@
+            <table class="table table-bordered">
+                <thead class="bg-info text-center text-white">
+                    <tr>
+                        <th>ID</th>
+                        <th>Persona</th>
+                        <th>Observaci&oacute;n</th>
+                        <th>Monto</th>
+                        <th>Editar</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var aporte in ListaAporte)
+                    {
+                        <tr class="text-center">
+                            <td>@aporte.AportesId</td>
+                            <td>@aporte.Persona</td>
+                            <td>@aporte.Observacion</td>
+                            <td>@aporte.Monto.ToString("C")</td>
+                            <td>
+                                <a href="/Aportes/Edit/@aporte.AportesId"
+                                   class="btn btn-warning"> Editar</a>
+                            </td>
+                            <td>
+                                <a href="/Aportes/Delete/@aporte.AportesId"
+                                   class="btn btn-danger"> Borrar</a>
+                            </td>
+                        </tr>
+                    }
+                    @* Fila para el conteo y total *@
+                    <tr class="text-center bg-light">
+                        <td class="text-end"><strong>Conteo:</strong></td>
+                        <td><strong>@ListaAporte.Count()</strong></td>
+                        <td class="text-end"><strong>Monto Total:</strong></td>
+                        <td><strong>@CalcularTotal().ToString("C")</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
 @code {
+    public List<Aportes> ListaAporte = new List<Aportes>();
+    private string opcionFiltro = "";
+    private string datoActualFiltro = "";
 
+    protected override async Task OnInitializedAsync()
+    {
+        ListaAporte = await aportesService.Listar(e => true);
+        opcionFiltro = "persona";
+        datoActualFiltro = "";
+    }
+
+    private async Task Buscar()
+    {
+        if (datoActualFiltro.Trim() != "")
+        {
+            if (opcionFiltro == "id" && int.TryParse(datoActualFiltro, out int aporteId))
+            {
+                ListaAporte = await aportesService.Listar(a => a.AportesId == aporteId);
+            }
+            else if (opcionFiltro == "persona")
+            {
+                ListaAporte = await aportesService.Listar(a => a.Persona
+                    .ToLower()
+                    .Contains(datoActualFiltro
+                    .ToLower()));
+            }
+        }
+        else
+        {
+            ListaAporte = await aportesService.Listar(p => true);
+        }
+    }
+
+    // Método para calcular el Monto Total en tabla
+    private double CalcularTotal()
+    {
+        return ListaAporte.Sum(a => a.Monto);
+    }
 }
