@@ -81,4 +81,14 @@ public class AportesService(IDbContextFactory<Contexto> DbFactory)
             .FirstOrDefaultAsync();
         return ultimoAporte != null ? ultimoAporte.AportesId : 0;
     }
+
+    // Validación adicional para evitar dos aportes iguales
+    public async Task<bool> Existe(int aporteId, string? persona, string? observacion)
+    {
+        await using var contexto = await DbFactory.CreateDbContextAsync();
+        return await contexto.Aportes
+            .AnyAsync(a => a.AportesId != aporteId
+            && (a.Persona.ToLower() == persona.ToLower())
+            && (a.Observacion.ToLower() == observacion.ToLower()));
+    }
 }
