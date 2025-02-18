@@ -7,15 +7,6 @@
 
 <EditForm Model="Aporte" OnValidSubmit="Guardar">
 <DataAnnotationsValidator /> <ValidationSummary />
-
-    @if (!string.IsNullOrEmpty(MensajeError)) {
-        <div class="alert alert-danger">@MensajeError</div>
-    }
-
-    @if (!string.IsNullOrEmpty(MensajeExito)) {
-        <div class="alert alert-success">@MensajeExito</div>
-    }
-
     <div class="container">
         <div class="card shadow-lg">
             @* Título *@
@@ -60,6 +51,15 @@
                     <ValidationMessage For="@(() => Aporte.Monto)"></ValidationMessage>
                 </div>
             </div>
+
+            @* Mensajes de error*@
+            @if (!string.IsNullOrEmpty(MensajeError)) {
+                <div class="alert alert-danger">@MensajeError</div>
+            }
+
+            @if (!string.IsNullOrEmpty(MensajeExito)) {
+                <div class="alert alert-success">@MensajeExito</div>
+            }
 
             @* Botones Crear y Volver *@
             <div class="card-footer d-flex justify-content-center">
