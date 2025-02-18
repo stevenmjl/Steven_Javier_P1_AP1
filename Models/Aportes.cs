@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Steven_Javier_P1_AP1.Modelos;
 public class Aportes
@@ -6,12 +7,14 @@ public class Aportes
     [Key]
     public int AportesId { get; set; }
     
-    [Required(ErrorMessage = "La persona es requerida.")]
-    [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "La persona solo puede contener letras y espacios.")]
+    [Required(ErrorMessage = "Se debe agregar el nombre completo.")]
+    [RegularExpression(@"^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$",
+    ErrorMessage = "La persona no debe contener números ni caracteres especiales.")]
+    [MaxLength(50, ErrorMessage = "La persona no puede tener más de 50 carácteres.")]
     public String? Persona { get; set; }
 
     [Required(ErrorMessage = "La observacion es requerida.")]
-    [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "La descripción solo puede contener letras y espacios.")]
+    [MaxLength(100, ErrorMessage = "La observación no puede tener más de 100 caracteres.")]
     public string? Observacion { get; set; }
 
     [Required(ErrorMessage = "El monto es requerido.")]
