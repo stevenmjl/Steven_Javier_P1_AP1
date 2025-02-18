@@ -1,6 +1,7 @@
 using Steven_Javier_P1_AP1.Components;
-using RegistroTecnicos.DAL;
+using Steven_Javier_P1_AP1.DAL;
 using Microsoft.EntityFrameworkCore;
+using Steven_Javier_P1_AP1.Services;
 
 namespace Steven_Javier_P1_AP1
 {
@@ -16,6 +17,9 @@ namespace Steven_Javier_P1_AP1
 
             var ConStr = builder.Configuration.GetConnectionString("SqlConStr");
             builder.Services.AddDbContextFactory<Contexto>(o => o.UseSqlServer(ConStr));
+
+            // Inyectando el service de Aportes
+            builder.Services.AddScoped<AportesService>();
 
             var app = builder.Build();
 
