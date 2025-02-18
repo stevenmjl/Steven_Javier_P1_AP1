@@ -1,5 +1,99 @@
-﻿<h3>Delete</h3>
+﻿@page "/Aportes/Delete/{idAporte:int}"
+@rendermode InteractiveServer
+@inject AportesService aportesService
+@inject NavigationManager Navigation
+
+<PageTitle>Eliminar Aporte</PageTitle>
+
+<div class="container">
+    <div class="card shadow-lg">
+        @* Título *@
+        <div class="card-header text-white text-center">
+            <div class="bg-danger rounded">
+                <h1>Eliminar Aporte</h1>
+            </div>
+        </div>
+
+        <div class="card-body">
+            @* ID aporte *@
+            <div class="mb-3 col-2">
+                <label class="form-label" for="AporteId">ID:</label>
+                <InputNumber id="AporteId" class="form-control text-left" readonly
+                             @bind-Value="Aporte.AportesId"></InputNumber>
+            </div>
+
+            @* Persona *@
+            <div class="mb-3 col-4">
+                <label class="form-label" for="Persona">Persona:</label>
+                <InputText id="Persona" class="form-control" readonly
+                           @bind-Value="Aporte.Persona"></InputText>
+            </div>
+
+            @* Observacion *@
+            <div class="mb-3">
+                <label class="form-label" for="Observacion">Observaci&oacute;n:</label>
+                <InputText id="Observacion" class="form-control" readonly
+                           @bind-Value="Aporte.Observacion"></InputText>
+            </div>
+
+            @* Monto *@
+            <div class="mb-3 col-2">
+                <label class="form-label" for="Monto">Monto:</label>
+                <InputNumber id="Monto" class="form-control" readonly
+                             @bind-Value="Aporte.Monto"></InputNumber>
+            </div>
+
+            @* Mensajes de error*@
+            @if (!string.IsNullOrEmpty(MensajeError))
+            {
+                <div class="alert alert-danger">@MensajeError</div>
+            }
+
+            @* Botones de control *@
+            <div class="card-footer d-flex justify-content-center">
+                <button class="btn btn-danger" @onclick="Eliminar">
+                    Confirmar Eliminación
+                </button>
+                <button class="btn btn-secondary" @onclick="Volver">
+                    Volver
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 @code {
+    public Aportes? Aporte { get; set; } = new Aportes();
+    private string MensajeError = "";
 
+    [Parameter]
+    public int idAporte { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Aporte = await aportesService.Buscar(idAporte);
+
+        if (Aporte == null)
+        {
+            Navigation.NavigateTo("/Aportes/Index");
+        }
+    }
+
+    public async Task Eliminar()
+    {
+        MensajeError = "";
+
+        var eliminado = await aportesService.Eliminar(idAporte);
+
+        if (eliminado)
+        {
+            Navigation.NavigateTo("/Aportes/Index");
+        }
+        else
+        {
+            MensajeError = "No se pudo eliminar el aporte.";
+        }
+    }
+
+    public void Volver() => Navigation.NavigateTo("/Aportes/Index");
 }
